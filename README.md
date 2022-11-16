@@ -1,6 +1,7 @@
 原项目地址：
 https://gitee.com/hubzyy/sketch-meaxure
 
+新增：
 1.支持颜色变量的名字的导出
 
 
