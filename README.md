@@ -4,6 +4,7 @@ https://gitee.com/hubzyy/sketch-meaxure
 新增：
 1.支持颜色变量的名字的导出
 
+![image](https://user-images.githubusercontent.com/10082460/202130336-256083c4-fd6b-4682-9e11-2372222c1bd6.png)
 
 
 
