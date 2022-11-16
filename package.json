@@ -1,0 +1,44 @@
+{
+  "name": "sketch-meaxure",
+  "description": "Make it a fun to create spec for developers and teammates",
+  "version": "3.4.7",
+  "engines": {
+    "sketch": ">=69.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitee.com/hubzyy/sketch-meaxure.git"
+  },
+  "skpm": {
+    "name": "Sketch MeaXure",
+    "manifest": "src/manifest.json",
+    "homepage": "https://gitee.com/hubzyy/sketch-meaxure",
+    "appcast": "https://gitee.com/hubzyy/sketch-meaxure/raw/master/appcast.xml",
+    "main": "sketch-meaxure.sketchplugin",
+    "assets": [
+      "resources/**/*"
+    ]
+  },
+  "scripts": {
+    "build": "node scripts/buildTmpl.js && skpm-build",
+    "watch": "export DEBUG=1; skpm-build --watch",
+    "start": "export DEBUG=1; skpm-build --watch --run",
+    "postinstall": "npm run build && skpm-link",
+    "tmpl": "export DEBUG=1; node scripts/buildTmpl.js",
+    "play": "node scripts/playground.js"
+  },
+  "devDependencies": {
+    "@skpm/builder": "^0.7.0",
+    "@types/sketch": "git+https://github.com/qjebbs/sketch.d.ts.git",
+    "skpm": "^1.3.1",
+    "ts-loader": "^6.2.1",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.4",
+    "webpack": "^4.46.0"
+  },
+  "author": "utom & jebbs & hubzy <zy.jpeg@gmail.com>",
+  "dependencies": {
+    "@skpm/path": "^0.1.4",
+    "@types/jquery": "^3.5.13"
+  }
+}

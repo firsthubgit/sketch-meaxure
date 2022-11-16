@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Processing - Sketch MeaXure</title>
+
+    <link href="assets/css/normalize.css" rel="stylesheet">
+    <link href="assets/css/app.css" rel="stylesheet">
+    <script type="text/javascript" src="assets/js/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="assets/js/common.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="process-box">
+            <div class="process-bg">
+                <div id="processing" class="processing"></div>
+            </div>
+            <p id="processing-text"></p>
+        </div>
+    </div>
+    <script>
+        $('#processing').css('width', 0);
+        meaxure.onDidReceiveMessage('process', data => {
+            try {
+                $('#processing').css('width', data.percentage + "%");
+                $('#processing-text').text(data.text);
+            } catch (error) {
+                let err = Object.assign({}, error);
+                if (error.message) err.message = error.message;
+                if (error.stack) err.stack = error.stack;
+                $('body').html(`<p style="word-wrap:break-word; word-break:break-all;">${JSON.stringify(err)}</p>`);
+            }
+        });
+    </script>
+</body>
+
+</html>

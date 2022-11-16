@@ -1,0 +1,21 @@
+# build artifacts
+Sketch-Meaxure.sketchplugin
+sketch-meaxure.sketchplugin.zip
+# npm
+# node_modules  依赖包更新了先用旧的吧
+.npm
+npm-debug.log
+node_modules/
+
+# mac
+.DS_Store
+._sketch-meaxure.sketchplugin
+
+# WebStorm
+.idea
+.vscode
+# sketch
+# sketch-assets
+
+sketch-meaxure.sketchplugin的替身
+package-lock.json
