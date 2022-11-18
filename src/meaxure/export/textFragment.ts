@@ -15,12 +15,6 @@ export function getTextFragment(artboard: Artboard, layer: Text, data: ArtboardD
     if (layer.type != sketch.Types.Text || layer.getFragmentsCount() < 2) return;
     let fragments = layer.getFragments();
 
-    // let msColor = layesr.style.sketchObject.textStyle().attributes().MSAttributedStringColorAttribute
-    // let refred = null
-    // if(msColor.swatchID()){
-    //     refred = findSwatchWithID(msColor.swatchID().toString())
-    // }
-    // stopwatch.tik('get text fragments');
     let offsetFragmentsY = 0;
     let textFrame = layer.frame;
     let heightIfSingleLine = layer.style.lineHeight || Math.max(...fragments.map(f => f.defaultLineHeight));

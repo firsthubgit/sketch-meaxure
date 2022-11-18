@@ -13,6 +13,8 @@ declare const NSAlert
 declare const NSAlertDefaultReturn
 declare const NSAlertAlternateReturn
 declare const MOClassDescription;
+declare const MOPointer;
+declare const NSMaxRange;
 declare function NSClassFromString(string);
 declare function NSSelectorFromString(string);
 declare function NSMakePoint(x: number, y: number);

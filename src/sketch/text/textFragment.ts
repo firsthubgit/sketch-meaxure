@@ -17,9 +17,8 @@ export function getFragmentsCount(layer: Layer): number {
 }
 export function getFragments(layer: Layer): TextFragment[] {
     let TextMSAttributedString = layer.sketchObject.attributedString();
-    let fragments: any[] = TextMSAttributedString.treeAsDictionary().value.attributes;
 
-    let colors = layer.sketchObject.updateableColors()
+    let fragments: any[] = TextMSAttributedString.treeAsDictionary().value.attributes;
 
     let results: TextFragment[] = [];
     let styleStr = JSON.stringify(layer.style);
@@ -38,37 +37,44 @@ export function getFragments(layer: Layer): TextFragment[] {
         delete styleBase.fontAxes;
     }
     styleStr = JSON.stringify(styleBase);
+    
+    let results2 = []
 
-    for (let i = 0; i < fragments.length; i++) {
-        let fragment = fragments[i];
-        let styleBase = JSON.parse(styleStr) as Style;
-        let fontFamily = (fragment.NSFont && fragment.NSFont.family) ?
-            String(fragment.NSFont.family) :
-            layer.style.fontFamily;
-        let fontSize = (fragment.NSFont && fragment.NSFont.attributes && fragment.NSFont.attributes.NSFontSizeAttribute) ?
-            Number(fragment.NSFont.attributes.NSFontSizeAttribute) :
-            layer.style.fontSize;
-        let fontWeight = TextMSAttributedString.attributedString().fontAttributesInRange ?
-            NSFontManager.sharedFontManager().weightOfFont(TextMSAttributedString.attributedString().fontAttributesInRange(NSMakeRange(fragment.location, fragment.length)).NSFont) :
-            layer.style.fontWeight;
+    const attrStr = layer.sketchObject.attributedStringValue()
+    let limitRange = NSMakeRange(0, attrStr.length())
+    let effectiveRange = MOPointer.alloc().init()
+    let length = attrStr.length()
 
-        // let textColor = (fragment.MSAttributedStringColorAttribute && fragment.MSAttributedStringColorAttribute.value) ?
-        //     parseColor(fragment.MSAttributedStringColorAttribute.value) :
-        //     '#000000FF';
+    while(limitRange.length > 0) {
+        let styleBase = JSON.parse(styleStr) as Style
+
+        let attributes = attrStr.attributesAtIndex_longestEffectiveRange_inRange(
+            limitRange.location,
+            effectiveRange,
+            limitRange);
         
-        let textColor = colors[i];
+        let fontFamily = attributes.NSFont.familyName();
+        let fontSize = attributes.NSFont.pointSize();
+        let fontWeightValue = NSFontManager.sharedFontManager().weightOfFont(attributes.NSFont);
+        let attributedSubstring = attrStr.attributedSubstringFromRange(effectiveRange.value());
+      
         
-        results.push(<TextFragment>{
-            location: fragment.location,
-            length: fragment.length,
-            text: fragment.text,
+        limitRange = NSMakeRange(
+              NSMaxRange(effectiveRange.value()),
+              NSMaxRange(limitRange) - NSMaxRange(effectiveRange.value())
+        );
+
+        results2.push(<TextFragment>{
+            location: effectiveRange.value().location,
+            length: effectiveRange.value().length,
+            text: attributedSubstring.string(),
             style: Object.assign(styleBase, <Style>{
-                textColor: textColor,
+                textColor: attributes.MSAttributedStringColorAttribute,
                 fontSize: fontSize,
                 fontFamily: fontFamily,
-                fontWeight: fontWeight,
-                textStrikethrough: fragment.NSStrikethrough ? 'single' : null,
-                textUnderline: fragment.NSUnderline ? 'single' : null,
+                fontWeight: fontWeightValue,
+                textStrikethrough: attributes.NSStrikethrough ? 'single' : null,
+                textUnderline: attributes.NSUnderline  ? 'single' : null,
             }),
             // cannot use layer.style.getDefaultLineHeight()
             // because we need every different default line height of fragment
@@ -76,7 +82,45 @@ export function getFragments(layer: Layer): TextFragment[] {
             defaultLineHeight: getDefaultLineHeightForFont(fontFamily, fontSize),
         });
     }
-    return results;
+    
+
+    // for (let i = 0; i < fragments.length; i++) {
+    //     let fragment = fragments[i];
+    //     let styleBase = JSON.parse(styleStr) as Style;
+    //     let fontFamily = (fragment.NSFont && fragment.NSFont.family) ?
+    //         String(fragment.NSFont.family) :
+    //         layer.style.fontFamily;
+    //     let fontSize = (fragment.NSFont && fragment.NSFont.attributes && fragment.NSFont.attributes.NSFontSizeAttribute) ?
+    //         Number(fragment.NSFont.attributes.NSFontSizeAttribute) :
+    //         layer.style.fontSize;
+    //     let fontWeight = TextMSAttributedString.attributedString().fontAttributesInRange ?
+    //         NSFontManager.sharedFontManager().weightOfFont(TextMSAttributedString.attributedString().fontAttributesInRange(NSMakeRange(fragment.location, fragment.length)).NSFont) :
+    //         layer.style.fontWeight;
+        
+
+    //     let textColor = (fragment.MSAttributedStringColorAttribute && fragment.MSAttributedStringColorAttribute.value) ?
+    //         parseColor(fragment.MSAttributedStringColorAttribute.value) :
+    //         '#000000FF';
+                
+    //     results.push(<TextFragment>{
+    //         location: fragment.location,
+    //         length: fragment.length,
+    //         text: fragment.text,
+    //         style: Object.assign(styleBase, <Style>{
+    //             textColor: textColor,
+    //             fontSize: fontSize,
+    //             fontFamily: fontFamily,
+    //             fontWeight: fontWeight,
+    //             textStrikethrough: fragment.NSStrikethrough ? 'single' : null,
+    //             textUnderline: fragment.NSUnderline ? 'single' : null,
+    //         }),
+    //         // cannot use layer.style.getDefaultLineHeight()
+    //         // because we need every different default line height of fragment
+    //         // not the whole style default.
+    //         defaultLineHeight: getDefaultLineHeightForFont(fontFamily, fontSize),
+    //     });
+    // }
+    return results2;
 }
 
 /**
